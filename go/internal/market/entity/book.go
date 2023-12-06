@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"math"
 	"sync"
 
 	"container/heap"
@@ -38,6 +37,7 @@ func (b *Book) Trade() {
 			sellOrderQueue[asset] = NewOrderQueue()
 			heap.Init(sellOrderQueue[asset])
 		}
+
 		if order.OrderType == "BUY" {
 			buyOrderQueue[asset].Push(order)
 			if sellOrderQueue[asset].Len() > 0 {
@@ -50,7 +50,7 @@ func (b *Book) Trade() {
 			if buyOrderQueue[asset].Len() > 0 {
 				pair := buyOrderQueue[asset].Pop().(*Order)
 
-				b.AddTransaction(order, pair, b.Wg)
+				b.AddTransaction(pair, order, b.Wg)
 			}
 		}
 	}
@@ -59,19 +59,6 @@ func (b *Book) Trade() {
 func (b *Book) AddTransaction(buyOrder, sellOrder *Order, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	price := sellOrder.Price
-	shares := int(math.Abs(float64(sellOrder.PendingShares - buyOrder.PendingShares)))
-
-	sellOrder.PendingShares -= shares
-	buyOrder.PendingShares -= shares
-
-	if sellOrder.PendingShares == 0 {
-		sellOrder.Status = "CLOSED"
-	}
-	if buyOrder.PendingShares == 0 {
-
-	}
-
-	transaction := NewTrasaction(buyOrder, sellOrder, price, shares)
+	transaction := NewTrasaction(buyOrder, sellOrder)
 	b.Transactions = append(b.Transactions, *transaction)
 }

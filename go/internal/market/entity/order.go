@@ -1,5 +1,7 @@
 package entity
 
+import "fmt"
+
 type Order struct {
 	Id            string
 	Investor      *Investor
@@ -7,9 +9,9 @@ type Order struct {
 	Price         float32
 	Shares        int
 	Side          string
-	Status        string
+	Status        string // CLOSED | OPEN
 	OrderType     string
-	PendingShares int // CLOSED | OPEN
+	PendingShares int
 }
 
 func NewOrder(id string, investor *Investor, asset *Asset, shares int, price float32, side string) *Order {
@@ -23,4 +25,15 @@ func NewOrder(id string, investor *Investor, asset *Asset, shares int, price flo
 		PendingShares: shares,
 		Status:        "OPEN",
 	}
+}
+
+func (o *Order) CloseOrder() {
+	if o.PendingShares == 0 {
+		o.Status = "CLOSED"
+		fmt.Println("Order closed")
+	}
+}
+
+func (o *Order) UpdatePendingShares(shares int) {
+	o.PendingShares += shares
 }

@@ -1,16 +1,17 @@
 package entity
 
 type Asset struct {
-	Name   string
-	Id     string
-	Value  float32
-	Shares int
+	Id           string
+	MarketVolume int
+	Name         string
+	Shares       int
+	Value        float32
 }
 
-func NewAsset(id, name string, value float32) *Asset {
+func NewAsset(id, name string, marketVolume int) *Asset {
 	return &Asset{
-		Name:  name,
-		Id:    id,
-		Value: value,
+		Id:           id,
+		MarketVolume: marketVolume,
+		Name:         name,
 	}
 }
